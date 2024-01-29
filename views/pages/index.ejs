@@ -6,25 +6,81 @@
     <body>
         <%- include ("../partials/nav.ejs") %>
 
-        <script type='text/javascript'>
-            function initEmbeddedMessaging() {
-              try {
-                embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
-          
-                embeddedservice_bootstrap.init(
-                  '00D4C000000LPq8',
-                  'NW_edu_Web_Deployment_English',
-                  'https://formativ--devint.sandbox.my.site.com/ESWNWeduWebDeployment1706023343860',
-                  {
-                    scrt2URL: 'https://formativ--devint.sandbox.my.salesforce-scrt.com'
-                  }
-                );
-              } catch (err) {
-                console.error('Error loading Embedded Messaging: ', err);
-              }
+        <!-- https://floating-ravine-13161-0f4fd8e65950.herokuapp.com?local=en_US -->
+        <!--Test MIAW Northwell Health Dev-->
+
+        <script>
+            let url_params = new URLSearchParams(window.location.search);
+            let user_selected_language = "en_US";
+            if (url_params.has("locale")) {
+                user_selected_language = url_params.get("locale");
+            }
+
+            const script = document.createElement("script");
+            script.type = "text/javascript";
+            switch (user_selected_language) {
+                case "es":
+                    script.src = "https://formativ--devint.sandbox.my.site.com/ESWNWeduWebDeployment1706023848931/assets/js/bootstrap.min.js";
+                    break;
+
+                default:
+                    script.src = "https://formativ--devint.sandbox.my.site.com/ESWNWeduWebDeployment1706023343860/assets/js/bootstrap.min.js";
+                    break;
+            }
+
+            script.onload = () => {
+                try {
+                    //Language Setting
+                    embeddedservice_bootstrap.settings.language =
+                        user_selected_language;
+                    window.addEventListener("onEmbeddedMessagingReady", () => {
+                        embeddedservice_bootstrap.prechatAPI.setHiddenPrechatFields(
+                            {
+                                LanguageCode: user_selected_language,
+                            }
+                        );
+                    });
+
+                    let deploymentId = "00D4C000000LPq8";
+                    let deploymentSCRT = "https://formativ--devint.sandbox.my.salesforce-scrt.com";
+
+                    let deploymentName;
+                    let deploymentSite;
+
+                    switch (user_selected_language) {
+                        case "es":
+                            deploymentName = "NW_edu_Web_Deployment_Spanish";
+                            deploymentSite =
+                                "https://formativ--devint.sandbox.my.site.com/ESWNWeduWebDeployment1706023848931";
+                            break;
+
+                        default:
+                            deploymentName = "NW_edu_Web_Deployment_English";
+                            deploymentSite = "https://formativ--devint.sandbox.my.site.com/ESWNWeduWebDeployment1706023343860";
+                            break;
+                    }
+
+                    embeddedservice_bootstrap.init(
+                        deploymentId,
+                        deploymentName,
+                        deploymentSite,
+                        {
+                            scrt2URL: deploymentSCRT,
+                        }
+                    );
+                } catch (err) {
+                    console.error("Error loading Embedded Messaging: ", err);
+                }
             };
+
+            script.onerror = () => {
+                console.log("Error occurred while loading script");
+            };
+
+            document.body.appendChild(script);
         </script>
-        <script type='text/javascript' src='https://formativ--devint.sandbox.my.site.com/ESWNWeduWebDeployment1706023343860/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+    
+        <!--Test MIAW Northwell Health Dev-->
 
         <div class="jumbotron text-center">
             <div class="container">
